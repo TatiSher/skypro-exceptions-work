@@ -14,7 +14,7 @@ public class EmployeeServiseImpl implements EmployeeServise {
 
     private int indexOf(Employee newEmployee) {
         for (int i = 0; i < employees.length; i++) {
-            if (employees[i].equals(newEmployee)) {
+            if (newEmployee.equals(employees[i])) {
                 return i;
             }
         }
@@ -24,14 +24,14 @@ public class EmployeeServiseImpl implements EmployeeServise {
     @Override
     public Employee add(String firstName, String lastName) {
         Employee newEmployee = new Employee(firstName, lastName);
+        if (indexOf(newEmployee) != -1) {
+            throw new EmployeeExistsException();
+        }
         for (int i = 0; i < employees.length; i++) {
             if (employees[i] == null) {
                 employees[i] = newEmployee;
                 return newEmployee;
             }
-        }
-        if (indexOf(newEmployee) != -1) {
-            throw new EmployeeExistsException();
         }
         throw new EmployeeCannotBeAddedException();
     }
@@ -40,13 +40,12 @@ public class EmployeeServiseImpl implements EmployeeServise {
     @Override
     public Employee remove(String firstName, String lastName) {
         Employee newEmployee = new Employee(firstName, lastName);
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i].equals(newEmployee)) {
-                employees[i] = null;
-                return employees[i];
-            }
+        int employeeIndex = indexOf(newEmployee);
+        if (employeeIndex == -1){
+            throw new NoEmployeeFoundException();
         }
-        throw new NoEmployeeFoundException();
+        employees[employeeIndex] = null;
+        return newEmployee;
     }
 
     @Override
